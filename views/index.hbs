@@ -52,8 +52,8 @@
       <br> <br><br><br>
 
       <div>
-      <form  class="d-flex" style="margin-left: 30%;">
-        <input class="form-control me-2" type="search" id="searchInput" placeholder="Search City" style="border-radius: 30px;width: 50%;">
+      <form action='/' method="POST"  class="d-flex" style="margin-left: 30%;">
+        <input class="form-control me-2" name="city" type="search" id="searchInput" placeholder="Search City" style="border-radius: 30px;width: 50%;">
         <button type="submit" class="btn btn-dark" id="searchButton" style="border-color: white;padding: 10px;">Find</button>
       </form>
     </div>
@@ -415,13 +415,7 @@ var ISTOffset = 330;   // IST offset UTC +5:30
       const searchInput = document.getElementById("searchInput");
       const searchButton = document.getElementById("searchButton");
 
-      searchButton.addEventListener("click",(e)=>{
-
-        e.preventDefault();
-        getWeather(searchInput.value);
-        searchInput.value = '';
-
-      });
+     
 
       const getWeather = async (city) =>{
         try{

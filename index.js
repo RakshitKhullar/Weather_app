@@ -4,10 +4,14 @@ const fetch=require('node-fetch');
 var geolocation = require('geolocation');
 const { Navigator } = require("node-navigator");
 const navigator = new Navigator();
-const port =process.env.port || 2000;
+const port =process.env.PORT || 2000;
 
 // const staticpath = path.join(__dirname ,"/public");
 // app.use(express.static(staticpath));
+
+
+// body parser
+app.use(express.urlencoded({extended: true}));
 
 app.use(express.static(__dirname + '/public'));
 
@@ -167,6 +171,19 @@ var ISTOffset = 330;   // IST offset UTC +5:30
 //   })
 //   .catch(err=>console.log(err));
 // });
+
+// searchButton.addEventListener("click",(e)=>{
+
+//   e.preventDefault();
+//   getWeather(searchInput.value);
+//   searchInput.value = '';
+
+// });
+
+app.post('/',(req,res)=>{
+  console.log(req.body.city);
+  res.send("hello");
+})
 
 app.get("*",(req,res)=>{
     res.send("404");
