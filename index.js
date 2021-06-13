@@ -1,17 +1,12 @@
 const express = require("express");
 const app = express();
 const fetch=require('node-fetch');
-var geolocation = require('geolocation');
-const { Navigator } = require("node-navigator");
-const navigator = new Navigator();
-const port =process.env.PORT || 2000;
-
-// const staticpath = path.join(__dirname ,"/public");
-// app.use(express.static(staticpath));
-
+const port =process.env.PORT || 5000;
 
 // body parser
 app.use(express.urlencoded({extended: true}));
+
+
 
 app.use(express.static(__dirname + '/public'));
 
@@ -78,9 +73,40 @@ var ISTOffset = 330;   // IST offset UTC +5:30
   }
 
   app.get('/',(req,res)=>{
-  navigator.geolocation.getCurrentPosition((geolocations, error) => {
-    console.log(geolocations);
-    if (error) {fetch(`https://api.openweathermap.org/data/2.5/weather?q=Delhi&units=metric&appid=887233809a61861b250933775626159a`)
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=Delhi&units=metric&appid=887233809a61861b250933775626159a`)
+    .then(response=> response.json())
+    .then(weather=>{
+        
+      const{name} = weather;
+      const{temp_max} = weather.main;
+      const{temp_min} = weather.main;
+      const{sunrise} = weather.sys;
+      const{sunset} = weather.sys;
+      const{description} = weather.weather[0];
+      const{humidity} = weather.main;
+      const{speed} = weather.wind;
+      const{deg} = weather.wind;
+
+        res.render('index',{
+            city :name,
+            maxTemprature :temp_max, 
+            minTemprature :temp_min,  
+            sunrise1 :msToHMS(sunrise),
+            sunset1 :msToHMS(sunset),
+            sky :description,  
+            Humidity :humidity, 
+            windSpeed :speed, 
+            pos:true,
+            windDirection :degToCard(deg)
+})
+    })
+    .catch(err=>console.log(err));
+});
+
+
+app.post('/',(req,res)=>{
+  if(req.body.city != ""){
+  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${req.body.city}&units=metric&appid=887233809a61861b250933775626159a`)
     .then(response=> response.json())
     .then(weatherData=>{
   
@@ -93,6 +119,8 @@ var ISTOffset = 330;   // IST offset UTC +5:30
               const{humidity} = weatherData.main;
               const{speed} = weatherData.wind;
               const{deg} = weatherData.wind;
+
+              // console.log(weatherData);
         
         res.render('index',{
           city :name,
@@ -103,90 +131,52 @@ var ISTOffset = 330;   // IST offset UTC +5:30
           sky :description,  
           Humidity :humidity, 
           windSpeed :speed, 
+          pos:false,
           windDirection :degToCard(deg)
         })
   
     })
-    .catch(err=>console.log(err));}
-
-
+    .catch(err=>{console.log(err)
+      res.redirect('/');
+     });
+  }
     else{
-    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${geolocations.latitude}&lon=${geolocations.longitude}&appid=887233809a61861b250933775626159a`)
-     .then(response => response.json())
-     .then(data =>{
-            const{name} = data;
-            const{temp_max} = data.main;
-            const{temp_min} = data.main;
-            const{sunrise} = data.sys;
-            const{sunset} = data.sys;
-            const{description} = data.weather[0];
-            const{humidity} = data.main;
-            const{speed} = data.wind;
-            const{deg} = data.wind;
-    
-    res.render('index',{
-      city :name,
-      maxTemprature :Math.round(temp_max-273), 
-      minTemprature :Math.round(temp_min-273),  
-      sunrise1 :msToHMS(sunrise),
-      sunset1 :msToHMS(sunset),
-      sky :description,  
-      Humidity :humidity, 
-      windSpeed :speed, 
-      windDirection :degToCard(deg)
-    }) 
-    
-     }).catch(err=>console.log(err));}
-});
+    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${req.body.latitude}&lon=${req.body.longitude}&appid=887233809a61861b250933775626159a`)
+    .then(response => response.json())
+    .then(data =>{
+           const{name} = data;
+           const{temp_max} = data.main;
+           const{temp_min} = data.main;
+           const{sunrise} = data.sys;
+           const{sunset} = data.sys;
+           const{description} = data.weather[0];
+           const{humidity} = data.main;
+           const{speed} = data.wind;
+           const{deg} = data.wind;
 
-});
-
-// app.get('/',(req,res)=>{
-//   fetch(`https://api.openweathermap.org/data/2.5/weather?q=Delhi&units=metric&appid=887233809a61861b250933775626159a`)
-//   .then(response=> response.json())
-//   .then(weatherData=>{
-
-//             const{name} = weatherData;
-//             const{temp_max} = weatherData.main;
-//             const{temp_min} = weatherData.main;
-//             const{sunrise} = weatherData.sys;
-//             const{sunset} = weatherData.sys;
-//             const{description} = weatherData.weather[0];
-//             const{humidity} = weatherData.main;
-//             const{speed} = weatherData.wind;
-//             const{deg} = weatherData.wind;
-      
-//       res.render('index',{
-//         city :name,
-//         maxTemprature :temp_max, 
-//         minTemprature :temp_min,  
-//         sunrise1 :msToHMS(sunrise),
-//         sunset1 :msToHMS(sunset),
-//         sky :description,  
-//         Humidity :humidity, 
-//         windSpeed :speed, 
-//         windDirection :degToCard(deg)
-//       })
-
-//   })
-//   .catch(err=>console.log(err));
-// });
-
-// searchButton.addEventListener("click",(e)=>{
-
-//   e.preventDefault();
-//   getWeather(searchInput.value);
-//   searchInput.value = '';
-
-// });
-
-app.post('/',(req,res)=>{
-  console.log(req.body.city);
-  res.send("hello");
+           
+   
+   res.render('index',{
+     city :name,
+     maxTemprature :Math.round(temp_max-273), 
+     minTemprature :Math.round(temp_min-273),  
+     sunrise1 :msToHMS(sunrise),
+     sunset1 :msToHMS(sunset),
+     sky :description,  
+     Humidity :humidity, 
+     windSpeed :speed, 
+     pos: false,
+     windDirection :degToCard(deg)
+   }) 
+   
+    })
+    .catch(err=>{console.log(err)
+      res.redirect("/")});
+    }
 })
 
 app.get("*",(req,res)=>{
-    res.send("404");
+    res.redirect('/');
 });
 
 app.listen(port,()=>{

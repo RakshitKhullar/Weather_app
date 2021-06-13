@@ -138,37 +138,3 @@ width: 100px;
 }
 
 
-/*  const getLocation = async (lat,long) =>{
-    try{
-      const api = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=887233809a61861b250933775626159a`,
-          {mode: 'cors'} 
-      );
-      
-      const data = await api.json();
-
-       // console.log(data); 
-
-        const{name} = data;
-        const{temp_max} = data.main;
-        const{temp_min} = data.main;
-        const{sunrise} = data.sys;
-        const{sunset} = data.sys;
-        const{description} = data.weather[0];
-        const{humidity} = data.main;
-        const{speed} = data.wind;
-        const{deg} = data.wind;
-
-
-        loc.innerHTML = name;
-        maxTemprature.innerHTML = Math.round(temp_max-273);  maxTemprature1.innerHTML = Math.round(temp_max-273);
-        minTemprature.innerHTML = Math.round(temp_min-273);  minTemprature1.innerHTML = Math.round(temp_min-273);
-        sunrise1.innerHTML = msToHMS(sunrise);
-        sunset1.innerHTML = msToHMS(sunset);
-        sky.innerHTML = description;  sky1.innerHTML = description;
-        Humidity.innerHTML = humidity; Humidity1.innerHTML = humidity;
-        windSpeed.innerHTML = speed; windSpeed1.innerHTML = speed;
-        windDirection.innerHTML = degToCard(deg);
-
-    }catch{alert("Data Not Found");}
-  }
-       */
